@@ -1,82 +1,482 @@
 # ARCHITECTURE.md — Arquitetura Técnica
 
-## 1. Diagrama de Arquitetura Geral
+## 1. Stack Tecnológico
+
+### Frontend (✅ Pronto)
+- **React 19** — UI framework moderno
+- **Vite 5.4** — Build tool ultrarrápido
+- **Styled Components 6.4** — CSS-in-JS com componentes
+- **React Router 7** — Roteamento declarativo
+- **Lucide React 1.16** — Ícones SVG
+
+### Backend (🔲 A Fazer - FASE 2)
+- **Node.js 20+** — Runtime JavaScript
+- **Express.js** — Framework web leve
+- **Firebase Admin SDK** — Gerenciamento de autenticação
+- **Express Validator** — Validação de dados
+
+### Banco de Dados (🔲 Firebase - Configurar em FASE 1)
+- **Firebase Firestore** — NoSQL em tempo real
+- **Firebase Storage** — Armazenamento de arquivos/imagens
+- **Firebase Auth** — Autenticação segura
+
+### Integrações (🔲 Futuro)
+- **Google Maps API v3** — Mapas e geolocalização
+- **Google Geocoding API** — Conversão de endereços
+- **Firebase Cloud Messaging** — Notificações push
+- **Stripe** — Pagamentos (FASE 5+)
+
+---
+
+## 2. Diagrama de Arquitetura Geral
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Frontend (React/Vite)                     │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │   Splash     │  │    Home      │  │   Explore    │      │
-│  └──────────────┘  └──────────────┘  └──────────────┘      │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │ Restaurant   │  │  Favorites   │  │   Profile    │      │
-│  └──────────────┘  └──────────────┘  └──────────────┘      │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │   Merchant   │  │    Specs     │  │    Auth      │      │
-│  └──────────────┘  └──────────────┘  └──────────────┘      │
-└──────────────┬──────────────────────────────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────────────────────────────┐
-│           Services & State Management                        │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │   Auth Ctx   │  │   User Ctx   │  │ Router (RRD) │      │
-│  └──────────────┘  └──────────────┘  └──────────────┘      │
-└──────────────┬──────────────────────────────────────────────┘
-               │
-      ┌────────┴───────────┬────────────────┐
-      ▼                    ▼                ▼
-┌──────────────┐   ┌──────────────┐   ┌──────────────┐
-│  Firebase    │   │ Backend API  │   │ Google Maps  │
-│   Auth       │   │  (Node.js)   │   │     API      │
-└──────┬───────┘   └──────┬───────┘   └──────────────┘
-       │                  │
-       └──────────┬───────┘
-                  ▼
-        ┌─────────────────────┐
-        │  Firestore (Cloud)  │
-        │   (Database Real)   │
-        └─────────────────────┘
-               │
-       ┌───────┴──────────┬──────────────┐
-       ▼                  ▼              ▼
-   [Users]          [Restaurants]   [Reservations]
-   [Favorites]      [Reviews]       [Orders]
+┌─────────────────────────────────────────────────────┐
+│              Frontend (React/Vite)                   │
+│  ┌──────────────────────────────────────────────┐  │
+│  │  Pages: Home, Explore, Restaurant, Profile  │  │
+│  │  Dashboard, Favorites, Auth                  │  │
+│  └──────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────┐  │
+│  │  Components: Navbar, Card, Button, Input     │  │
+│  │  SectionHeader, RestaurantCard, Sidebar      │  │
+│  └──────────────────────────────────────────────┘  │
+└─────────────────┬──────────────────────────────────┘
+                  │
+        ┌─────────┴──────────────┬────────────┐
+        ▼                        ▼            ▼
+   ┌──────────┐          ┌────────────┐  ┌─────────┐
+   │ Firebase │          │ Google     │  │ Backend │
+   │ Auth     │          │ Maps API   │  │ API     │
+   │          │          │            │  │ (Future)│
+   └────┬─────┘          └────────────┘  └─────────┘
+        │
+        ▼
+   ┌──────────────┐
+   │ Firestore    │
+   │ Database     │
+   │              │
+   │ Collections: │
+   │ - users      │
+   │ - restaurants│
+   │ - favorites  │
+   │ - reservations
+   │ - reviews    │
+   │ - menus      │
+   │ - categories │
+   │ - routes     │
+   └──────────────┘
 ```
 
 ---
 
-## 2. Stack Tecnológico Detalhado
+## 3. Fluxo de Dados
 
-### Frontend
-- **Framework:** React 19 + Vite 5.4
-- **Roteamento:** React Router v7
-- **Estado:** Context API + Hooks
-- **Estilo:** Styled Components 6.4
-- **Ícones:** Lucide React 1.16
-- **HTTP:** Axios (será adicionado)
-- **Validação:** Zod (será adicionado)
+### Fase 1 (MVP)
+```
+Usuário
+  ↓
+React Component (Home, Explore, etc)
+  ↓
+AuthContext / State Management
+  ↓
+Firebase SDK
+  ↓
+Firebase (Auth + Firestore)
+  ↓
+Local State / React State
+  ↓
+Renderização UI
+```
 
-### Backend
-- **Runtime:** Node.js 20+
-- **Framework:** Express.js
-- **Autenticação:** Firebase Admin
-- **Validação:** Express Validator
-- **Cors:** CORS middleware
-- **Dotenv:** Variáveis de ambiente
+### Fase 2+ (Com Backend)
+```
+Usuário
+  ↓
+React Component
+  ↓
+API Service (Axios/Fetch)
+  ↓
+Backend API (Node.js/Express)
+  ↓
+Firebase Admin SDK
+  ↓
+Firebase (Firestore + Storage)
+  ↓
+Response → Frontend → Update UI
+```
 
-### Database
-- **Principal:** Google Firestore (NoSQL)
-- **Real-time:** Firestore Listeners
-- **Storage:** Firebase Storage
-- **Auth:** Firebase Authentication
+---
 
-### Integrações
-- **Mapas:** Google Maps API v3
-- **Geocoding:** Google Geocoding API
-- **Notificações:** Firebase Cloud Messaging
-- **Pagamento:** Stripe (futuro)
-- **Email:** SendGrid (futuro)
+## 4. Estrutura Firestore
+
+### Coleção: `users`
+```json
+users/{userId}
+├── name: string
+├── email: string
+├── profileType: "client" | "merchant"
+├── avatar: string (URL Firebase Storage)
+├── phone: string
+├── address: string
+├── preferences: {
+│   cuisines: array,
+│   priceRange: "cheap" | "moderate" | "expensive",
+│   restrictions: array (vegetarian, etc)
+│ }
+├── language: "pt-BR" | "en" | ...
+├── createdAt: timestamp
+├── updatedAt: timestamp
+└── lastLogin: timestamp
+```
+
+### Coleção: `restaurants`
+```json
+restaurants/{restaurantId}
+├── name: string
+├── email: string
+├── phone: string
+├── address: string
+├── location: geopoint {latitude, longitude}
+├── cuisine: array ["Nordestina", "Italiana"]
+├── priceRange: "cheap" | "moderate" | "expensive"
+├── rating: number (0-5)
+├── reviewCount: number
+├── description: string
+├── image: string (URL)
+├── hours: {
+│   monday: {open: "11:00", close: "23:00"},
+│   ...
+│ }
+├── createdAt: timestamp
+└── updatedAt: timestamp
+```
+
+### Subcoleção: `restaurants/{restaurantId}/reviews`
+```json
+reviews/{reviewId}
+├── userId: string
+├── userName: string
+├── rating: number (1-5)
+├── comment: string
+├── images: array (URLs)
+├── createdAt: timestamp
+└── helpful: number
+```
+
+### Subcoleção: `restaurants/{restaurantId}/menu`
+```json
+menu/{itemId}
+├── name: string
+├── description: string
+├── price: number
+├── category: string (entradas, pratos, sobremesas)
+├── image: string (URL)
+├── available: boolean
+└── createdAt: timestamp
+```
+
+### Coleção: `favorites`
+```json
+favorites/{userId}
+├── restaurantIds: array [restaurantId1, restaurantId2, ...]
+└── updatedAt: timestamp
+```
+
+### Coleção: `reservations`
+```json
+reservations/{reservationId}
+├── userId: string
+├── restaurantId: string
+├── date: timestamp
+├── time: string ("19:30")
+├── guests: number
+├── specialRequests: string
+├── status: "pending" | "confirmed" | "cancelled" | "completed"
+├── createdAt: timestamp
+├── updatedAt: timestamp
+└── userNotes: string
+```
+
+### Coleção: `notifications`
+```json
+notifications/{userId}
+├── items: array [
+│   {
+│     id: string,
+│     title: string,
+│     message: string,
+│     type: "reservation" | "review" | "promotion",
+│     read: boolean,
+│     createdAt: timestamp
+│   }
+│ ]
+└── lastRead: timestamp
+```
+
+### Coleção: `categories`
+```json
+categories
+├── Nordestina: {icon, color, description}
+├── Italiana: {icon, color, description}
+├── Japonesa: {icon, color, description}
+├── Árabe: {icon, color, description}
+├── Cafeterias: {icon, color, description}
+├── Doces: {icon, color, description}
+└── Frutos do Mar: {icon, color, description}
+```
+
+### Coleção: `routes` (Roteiros Gastronômicos)
+```json
+routes/{routeId}
+├── name: string ("Rota da Tapioca")
+├── description: string
+├── restaurants: array [restaurantId1, restaurantId2, ...]
+├── distance: number (km)
+├── duration: number (horas)
+├── image: string (URL)
+├── createdAt: timestamp
+└── difficulty: "easy" | "medium" | "hard"
+```
+
+---
+
+## 5. Estrutura de Pastas do Projeto
+
+```
+saboresdaota-pweb/
+├── src/
+│   ├── config/
+│   │   └── firebase.js              # Configuração Firebase
+│   ├── context/
+│   │   ├── AuthContext.jsx          # Contexto de autenticação
+│   │   └── AppContext.jsx           # Contexto global
+│   ├── services/
+│   │   ├── auth.js                  # Funções de autenticação
+│   │   ├── firestore.js             # Operações Firestore
+│   │   ├── search.js                # Busca e filtros
+│   │   └── storage.js               # Upload de arquivos
+│   ├── hooks/
+│   │   ├── useAuth.js               # Hook de autenticação
+│   │   ├── useRestaurants.js        # Hook de restaurantes
+│   │   └── useFavorites.js          # Hook de favoritos
+│   ├── components/
+│   │   ├── BrandNavbar.jsx
+│   │   ├── Sidebar.jsx
+│   │   ├── PrimaryButton.jsx
+│   │   ├── SecondaryButton.jsx
+│   │   ├── InputField.jsx
+│   │   ├── RestaurantCard.jsx
+│   │   ├── SectionHeader.jsx
+│   │   ├── SpecsNav.jsx
+│   │   └── Card.jsx
+│   ├── pages/
+│   │   ├── Splash.jsx
+│   │   ├── Login.jsx
+│   │   ├── Signup.jsx
+│   │   ├── ForgotPassword.jsx
+│   │   ├── Home.jsx
+│   │   ├── Explore.jsx
+│   │   ├── Restaurant.jsx
+│   │   ├── Favorites.jsx
+│   │   ├── Profile.jsx
+│   │   ├── MerchantDashboard.jsx
+│   │   ├── MerchantOrders.jsx
+│   │   ├── MerchantReservations.jsx
+│   │   ├── MerchantReviews.jsx
+│   │   ├── MerchantReports.jsx
+│   │   ├── MerchantSettings.jsx
+│   │   ├── SpecOverview.jsx
+│   │   ├── SpecRequirements.jsx
+│   │   ├── SpecTasks.jsx
+│   │   ├── SpecFunctionality.jsx
+│   │   └── NotFound.jsx
+│   ├── data/
+│   │   └── mockRestaurants.js       # Dados de teste
+│   ├── styles/
+│   │   ├── theme.js                 # Design tokens (cores, tipografia)
+│   │   └── global.js                # Estilos globais
+│   ├── App.jsx                      # Roteamento principal
+│   ├── main.jsx                     # Entry point
+│   ├── index.css                    # CSS global
+│   └── App.css
+├── public/
+├── .env.local                       # Variáveis de ambiente (não commitar)
+├── .gitignore
+├── package.json
+├── vite.config.js
+├── eslint.config.js
+├── SPEC.md
+├── ARCHITECTURE.md
+├── DEVELOPMENT.md
+├── TODO.md
+├── README.md
+└── index.html
+```
+
+---
+
+## 6. Design System
+
+### Paleta de Cores
+
+| Nome | HEX | RGB | Uso |
+|------|------|------|------|
+| Bege Claro | #F5EBDD | rgb(245, 235, 221) | Fundo principal |
+| Marrom Escuro | #3B2621 | rgb(59, 38, 33) | Botões, textos primários |
+| Marrom Médio | #5A3D33 | rgb(90, 61, 51) | Hover, estados |
+| Caramelo | #C98B5B | rgb(201, 139, 91) | Destaques, acentos |
+| Areia | #D9B89C | rgb(217, 184, 156) | Bordas, campos |
+| Marrom Texto | #7A5C4E | rgb(122, 92, 78) | Texto secundário |
+| Branco | #FFFFFF | rgb(255, 255, 255) | Fundo cards |
+
+### Tipografia
+
+| Elemento | Fonte | Peso | Tamanho |
+|----------|-------|------|--------|
+| Logo | Playfair Display | Bold | 36px |
+| Título Principal | Playfair Display | Bold | 28px |
+| Título Seção | Playfair Display | SemiBold | 24px |
+| Subtítulo | Poppins | Medium | 18px |
+| Corpo | Poppins | Regular | 16px |
+| Pequeno | Poppins | Regular | 14px |
+| Botão | Poppins | SemiBold | 16px |
+
+### Componentes Estilizados
+
+#### Botão Primário
+```css
+background: #3B2621;
+color: white;
+height: 52px;
+border-radius: 12px;
+font-weight: 600;
+transition: all 0.3s ease;
+
+&:hover {
+  background: #5A3D33;
+}
+```
+
+#### Botão Secundário
+```css
+border: 1px solid #3B2621;
+background: transparent;
+color: #3B2621;
+border-radius: 12px;
+height: 52px;
+font-weight: 600;
+```
+
+#### Input Field
+```css
+background: #FFF8F2;
+border: 1px solid #D9B89C;
+border-radius: 10px;
+padding: 14px 16px;
+font-size: 16px;
+
+&:focus {
+  border-color: #3B2621;
+  outline: none;
+}
+```
+
+#### Card
+```css
+background: white;
+border-radius: 16px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+padding: 24px;
+```
+
+#### RestaurantCard
+```css
+background: white;
+border-radius: 12px;
+overflow: hidden;
+box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+transition: transform 0.3s, box-shadow 0.3s;
+
+&:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+```
+
+---
+
+## 7. Regras de Segurança Firestore
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Usuários
+    match /users/{userId} {
+      allow read, write: if request.auth.uid == userId;
+    }
+    
+    // Restaurantes (todos podem ler)
+    match /restaurants/{restaurantId} {
+      allow read: if true;
+      allow write: if request.auth.uid != null && 
+                      request.resource.data.userId == request.auth.uid;
+      
+      // Reviews (subcoleção)
+      match /reviews/{reviewId} {
+        allow read: if true;
+        allow create: if request.auth.uid != null &&
+                         request.resource.data.userId == request.auth.uid;
+      }
+    }
+    
+    // Favoritos
+    match /favorites/{userId} {
+      allow read, write: if request.auth.uid == userId;
+    }
+    
+    // Reservas
+    match /reservations/{reservationId} {
+      allow read, write: if request.auth.uid != null &&
+                           request.resource.data.userId == request.auth.uid;
+    }
+  }
+}
+```
+
+---
+
+## 8. Variáveis de Ambiente
+
+`.env.local`:
+```env
+# Firebase Configuration
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+
+# Backend (Futuro)
+VITE_API_URL=http://localhost:3000
+
+# Google Maps (Futuro)
+VITE_GOOGLE_MAPS_API_KEY=your_api_key
+```
+
+---
+
+## 9. Performance & Otimizações
+
+- ✅ Lazy loading de componentes com React.lazy()
+- ✅ Code splitting com React Router
+- ✅ Otimização de imagens com compressão
+- ✅ Cache de dados com localStorage
+- ✅ Memoização de componentes com React.memo()
+- 🔲 Service Workers (PWA)
+- 🔲 Image CDN (Cloudinary, etc)
 
 ---
 
